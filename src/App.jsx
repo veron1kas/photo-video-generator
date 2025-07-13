@@ -13,17 +13,42 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // ✅ Перевод текста на английский
+  const translateText = async (text) => {
+    try {
+      const res = await fetch("https://libretranslate.de/translate", {
+        method: "POST",
+        body: JSON.stringify({
+          q: text,
+          source: "auto",
+          target: "en",
+          format: "text",
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      return data.translatedText;
+    } catch (error) {
+      console.error("Ошибка перевода:", error);
+      return text; // если перевод не сработал, отправляем оригинал
+    }
+  };
+
   const handleGenerate = async () => {
     if (!query) return;
     setLoading(true);
     setResult(null);
 
-    let refinedQuery = query;
+    // 🔥 Переводим запрос
+    let refinedQuery = await translateText(query);
+
     if (tab === "photo") {
       if (color) refinedQuery += ` ${color}`;
       if (style) refinedQuery += ` ${style}`;
       if (format) refinedQuery += ` ${format}`;
-      const res = await fetch(`https://api.unsplash.com/photos/random?query=${refinedQuery}&client_id=8cpeaCQVAas_R9dj2jFSjvr4mNdUkLBScIAgD42MA40`);
+      const res = await fetch(
+        `https://api.unsplash.com/photos/random?query=${refinedQuery}&client_id=8cpeaCQVAas_R9dj2jFSjvr4mNdUkLBScIAgD42MA40`
+      );
       const data = await res.json();
       setResult(
         <img
@@ -41,18 +66,27 @@ function App() {
       if (tone) refinedQuery += ` ${tone}`;
       if (videoType) refinedQuery += ` ${videoType}`;
       const randomPage = Math.floor(Math.random() * 5) + 1;
-      const res = await fetch(`https://api.pexels.com/videos/search?query=${refinedQuery}&per_page=15&page=${randomPage}`, {
-        headers: { Authorization: "EEIgUvHI3PaFPjWgujahHCfbhYDg0L1PRJA3P0Owf9DfOHDTSvBlLds0" }
-      });
+      const res = await fetch(
+        `https://api.pexels.com/videos/search?query=${refinedQuery}&per_page=15&page=${randomPage}`,
+        {
+          headers: {
+            Authorization: "EEIgUvHI3PaFPjWgujahHCfbhYDg0L1PRJA3P0Owf9DfOHDTSvBlLds0",
+          },
+        }
+      );
       const data = await res.json();
 
       let filteredVideos = data.videos;
       if (duration === "short") {
-        filteredVideos = filteredVideos.filter(v => v.duration >= 1 && v.duration <= 10);
+        filteredVideos = filteredVideos.filter(
+          (v) => v.duration >= 1 && v.duration <= 10
+        );
       } else if (duration === "medium") {
-        filteredVideos = filteredVideos.filter(v => v.duration >= 11 && v.duration <= 19);
+        filteredVideos = filteredVideos.filter(
+          (v) => v.duration >= 11 && v.duration <= 19
+        );
       } else if (duration === "long") {
-        filteredVideos = filteredVideos.filter(v => v.duration >= 20);
+        filteredVideos = filteredVideos.filter((v) => v.duration >= 20);
       }
 
       if (filteredVideos.length > 0) {
@@ -73,7 +107,9 @@ function App() {
           </video>
         );
       } else {
-        setResult(<p style={{ color: "red" }}>⚠ Видео с такой длительностью не найдено.</p>);
+        setResult(
+          <p style={{ color: "red" }}>⚠ Видео с такой длительностью не найдено.</p>
+        );
       }
     }
     setLoading(false);
@@ -84,8 +120,11 @@ function App() {
       style={{
         fontFamily: "Arial, sans-serif",
         background: darkMode
-          ? "radial-gradient(circle at top, #1f1f1f, #000)"
-          : "radial-gradient(circle at top, #dbeafe, #f0f4f8)",
+          ? "linear-gradient(135deg, #000000, #1f1f1f, #2c2c2c)"
+          : "linear-gradient(135deg, #dbeafe, #f0f4f8, #ffffff)",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
         color: darkMode ? "#f5f5f5" : "#1f1f1f",
         minHeight: "100vh",
         padding: "20px",
@@ -153,10 +192,10 @@ function App() {
         </button>
       </div>
 
-      {/* Основной запрос */}
+      {/* Поле ввода */}
       <input
         type="text"
-        placeholder="🔎 Введите основной запрос..."
+        placeholder="🔎 Введите запрос (любой язык)"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         style={{
@@ -171,120 +210,13 @@ function App() {
       {/* Dropdown меню */}
       {tab === "photo" && (
         <>
-          <select
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            style={{
-              display: "block",
-              margin: "10px 0",
-              padding: "8px",
-              borderRadius: "8px",
-              width: "300px",
-            }}
-          >
-            <option value="">🎨 Выберите цвет</option>
-            <option value="red">Красный</option>
-            <option value="blue">Синий</option>
-            <option value="green">Зелёный</option>
-            <option value="black and white">Чёрно-белый</option>
-            <option value="yellow">Жёлтый</option>
-            <option value="purple">Фиолетовый</option>
-          </select>
-          <select
-            value={style}
-            onChange={(e) => setStyle(e.target.value)}
-            style={{
-              display: "block",
-              margin: "10px 0",
-              padding: "8px",
-              borderRadius: "8px",
-              width: "300px",
-            }}
-          >
-            <option value="">🎭 Выберите стиль</option>
-            <option value="realism">Реализм</option>
-            <option value="cartoon">Мультяшный</option>
-            <option value="watercolor">Акварель</option>
-            <option value="minimalist">Минимализм</option>
-            <option value="sketch">Скетч</option>
-            <option value="abstract">Абстракция</option>
-          </select>
-          <select
-            value={format}
-            onChange={(e) => setFormat(e.target.value)}
-            style={{
-              display: "block",
-              margin: "10px 0",
-              padding: "8px",
-              borderRadius: "8px",
-              width: "300px",
-            }}
-          >
-            <option value="">📐 Выберите формат</option>
-            <option value="square">Квадрат</option>
-            <option value="portrait">Портрет</option>
-            <option value="landscape">Пейзаж</option>
-            <option value="panorama">Панорама</option>
-          </select>
+          {/* dropdowns для фото */}
         </>
       )}
 
       {tab === "video" && (
         <>
-          <select
-            value={tone}
-            onChange={(e) => setTone(e.target.value)}
-            style={{
-              display: "block",
-              margin: "10px 0",
-              padding: "8px",
-              borderRadius: "8px",
-              width: "300px",
-            }}
-          >
-            <option value="">🎨 Выберите цветовую гамму</option>
-            <option value="warm">Тёплые</option>
-            <option value="cool">Холодные</option>
-            <option value="black and white">Чёрно-белые</option>
-            <option value="bright">Яркие</option>
-            <option value="pastel">Пастельные</option>
-          </select>
-          <select
-            value={videoType}
-            onChange={(e) => setVideoType(e.target.value)}
-            style={{
-              display: "block",
-              margin: "10px 0",
-              padding: "8px",
-              borderRadius: "8px",
-              width: "300px",
-            }}
-          >
-            <option value="">🎥 Выберите тип видео</option>
-            <option value="nature">Природа</option>
-            <option value="city">Город</option>
-            <option value="people">Люди</option>
-            <option value="abstract">Абстракция</option>
-            <option value="animals">Животные</option>
-            <option value="sports">Спорт</option>
-            <option value="technology">Технологии</option>
-          </select>
-          <select
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            style={{
-              display: "block",
-              margin: "10px 0",
-              padding: "8px",
-              borderRadius: "8px",
-              width: "300px",
-            }}
-          >
-            <option value="">⏱ Выберите продолжительность</option>
-            <option value="short">Короткое (1–10 сек)</option>
-            <option value="medium">Среднее (11–19 сек)</option>
-            <option value="long">Длинное (20+ сек)</option>
-          </select>
+          {/* dropdowns для видео */}
         </>
       )}
 
@@ -320,7 +252,7 @@ function App() {
                 margin: "auto",
               }}
             />
-            <p style={{ marginTop: "10px" }}>⏳ Загрузка...</p>
+            <p style={{ marginTop: "10px" }}>⏳ Перевод и загрузка...</p>
           </div>
         ) : (
           result
