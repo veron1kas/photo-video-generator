@@ -210,14 +210,121 @@ function App() {
       {/* Dropdown для фото */}
       {tab === "photo" && (
         <>
-          {/* dropdown для фото */}
+          <select
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
+            <option value="">🎨 Выберите цвет</option>
+            <option value="red">Красный</option>
+            <option value="blue">Синий</option>
+            <option value="green">Зелёный</option>
+            <option value="black and white">Чёрно-белый</option>
+            <option value="yellow">Жёлтый</option>
+            <option value="purple">Фиолетовый</option>
+          </select>
+          <select
+            value={style}
+            onChange={(e) => setStyle(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
+            <option value="">🎭 Выберите стиль</option>
+            <option value="realism">Реализм</option>
+            <option value="cartoon">Мультяшный</option>
+            <option value="watercolor">Акварель</option>
+            <option value="minimalist">Минимализм</option>
+            <option value="sketch">Скетч</option>
+            <option value="abstract">Абстракция</option>
+          </select>
+          <select
+            value={format}
+            onChange={(e) => setFormat(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
+            <option value="">📐 Выберите формат</option>
+            <option value="square">Квадрат</option>
+            <option value="portrait">Портрет</option>
+            <option value="landscape">Пейзаж</option>
+            <option value="panorama">Панорама</option>
+          </select>
         </>
       )}
 
       {/* Dropdown для видео */}
       {tab === "video" && (
         <>
-          {/* dropdown для видео */}
+          <select
+            value={tone}
+            onChange={(e) => setTone(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
+            <option value="">🎨 Выберите цветовую гамму</option>
+            <option value="warm">Тёплые</option>
+            <option value="cool">Холодные</option>
+            <option value="black and white">Чёрно-белые</option>
+            <option value="bright">Яркие</option>
+            <option value="pastel">Пастельные</option>
+          </select>
+          <select
+            value={videoType}
+            onChange={(e) => setVideoType(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
+            <option value="">🎥 Выберите тип видео</option>
+            <option value="nature">Природа</option>
+            <option value="city">Город</option>
+            <option value="people">Люди</option>
+            <option value="abstract">Абстракция</option>
+            <option value="animals">Животные</option>
+            <option value="sports">Спорт</option>
+            <option value="technology">Технологии</option>
+          </select>
+          <select
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
+            <option value="">⏱ Выберите продолжительность</option>
+            <option value="short">Короткое (1–10 сек)</option>
+            <option value="medium">Среднее (11–19 сек)</option>
+            <option value="long">Длинное (20+ сек)</option>
+          </select>
         </>
       )}
 
