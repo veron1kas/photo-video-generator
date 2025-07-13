@@ -11,10 +11,12 @@ function App() {
   const [duration, setDuration] = useState("");
   const [result, setResult] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleGenerate = async () => {
     if (!query) return;
-    setResult(<p style={{ color: darkMode ? "#ccc" : "#555" }}>🔄 Загрузка...</p>);
+    setLoading(true);
+    setResult(null);
 
     let refinedQuery = query;
     if (tab === "photo") {
@@ -27,7 +29,12 @@ function App() {
         <img
           src={data.urls.regular}
           alt="Generated"
-          style={{ borderRadius: "15px", boxShadow: darkMode ? "0 0 20px #000" : "0 0 20px #aaa", maxWidth: "100%", transition: "0.3s" }}
+          style={{
+            borderRadius: "15px",
+            boxShadow: darkMode ? "0 0 20px #000" : "0 0 20px #aaa",
+            maxWidth: "100%",
+            transition: "0.3s",
+          }}
         />
       );
     } else {
@@ -58,7 +65,7 @@ function App() {
               borderRadius: "15px",
               boxShadow: darkMode ? "0 0 20px #000" : "0 0 20px #aaa",
               maxWidth: "100%",
-              transition: "0.3s"
+              transition: "0.3s",
             }}
           >
             <source src={randomVideo.video_files[0].link} type="video/mp4" />
@@ -69,63 +76,79 @@ function App() {
         setResult(<p style={{ color: "red" }}>⚠ Видео с такой длительностью не найдено.</p>);
       }
     }
+    setLoading(false);
   };
 
   return (
-    <div style={{
-      fontFamily: "Arial, sans-serif",
-      background: darkMode ? "#1f1f1f" : "#f0f4f8",
-      color: darkMode ? "#f5f5f5" : "#1f1f1f",
-      minHeight: "100vh",
-      padding: "20px",
-      transition: "0.3s"
-    }}>
+    <div
+      style={{
+        fontFamily: "Arial, sans-serif",
+        background: darkMode
+          ? "radial-gradient(circle at top, #1f1f1f, #000)"
+          : "radial-gradient(circle at top, #dbeafe, #f0f4f8)",
+        color: darkMode ? "#f5f5f5" : "#1f1f1f",
+        minHeight: "100vh",
+        padding: "20px",
+        transition: "0.3s",
+      }}
+    >
       {/* Шапка */}
-      <header style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "30px",
-        padding: "10px 20px",
-        background: "linear-gradient(90deg, #4f46e5, #3b82f6)",
-        borderRadius: "10px",
-        color: "#fff",
-        boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
-      }}>
+      <header
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "30px",
+          padding: "10px 20px",
+          background: "linear-gradient(90deg, #4f46e5, #3b82f6)",
+          borderRadius: "10px",
+          color: "#fff",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+        }}
+      >
         <h1 style={{ margin: 0 }}>📸 Генерация фото и видео</h1>
-        <button onClick={() => setDarkMode(!darkMode)} style={{
-          background: darkMode ? "#f0f4f8" : "#1f1f1f",
-          color: darkMode ? "#1f1f1f" : "#f0f4f8",
-          border: "none",
-          borderRadius: "5px",
-          padding: "5px 10px",
-          cursor: "pointer",
-          fontWeight: "bold"
-        }}>
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          style={{
+            background: darkMode ? "#f0f4f8" : "#1f1f1f",
+            color: darkMode ? "#1f1f1f" : "#f0f4f8",
+            border: "none",
+            borderRadius: "5px",
+            padding: "5px 10px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
           {darkMode ? "🌞 Светлая" : "🌙 Тёмная"}
         </button>
       </header>
 
       {/* Выбор фото/видео */}
       <div style={{ marginBottom: "15px" }}>
-        <button onClick={() => setTab("photo")} style={{
-          backgroundColor: tab === "photo" ? "#3b82f6" : "#e5e7eb",
-          color: tab === "photo" ? "#fff" : "#1f2937",
-          border: "none",
-          padding: "10px 15px",
-          borderRadius: "5px 0 0 5px",
-          cursor: "pointer"
-        }}>
+        <button
+          onClick={() => setTab("photo")}
+          style={{
+            backgroundColor: tab === "photo" ? "#3b82f6" : "#e5e7eb",
+            color: tab === "photo" ? "#fff" : "#1f2937",
+            border: "none",
+            padding: "10px 15px",
+            borderRadius: "5px 0 0 5px",
+            cursor: "pointer",
+          }}
+        >
           Фото
         </button>
-        <button onClick={() => setTab("video")} style={{
-          backgroundColor: tab === "video" ? "#3b82f6" : "#e5e7eb",
-          color: tab === "video" ? "#fff" : "#1f2937",
-          border: "none",
-          padding: "10px 15px",
-          borderRadius: "0 5px 5px 0",
-          cursor: "pointer"
-        }}>
+        <button
+          onClick={() => setTab("video")}
+          style={{
+            backgroundColor: tab === "video" ? "#3b82f6" : "#e5e7eb",
+            color: tab === "video" ? "#fff" : "#1f2937",
+            border: "none",
+            padding: "10px 15px",
+            borderRadius: "0 5px 5px 0",
+            cursor: "pointer",
+          }}
+        >
           Видео
         </button>
       </div>
@@ -141,14 +164,24 @@ function App() {
           padding: "10px",
           borderRadius: "8px",
           border: "1px solid #ccc",
-          marginBottom: "10px"
+          marginBottom: "10px",
         }}
       />
 
       {/* Dropdown меню */}
       {tab === "photo" && (
         <>
-          <select value={color} onChange={(e) => setColor(e.target.value)} style={{ display: "block", margin: "10px 0", padding: "8px", borderRadius: "8px", width: "300px" }}>
+          <select
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
             <option value="">🎨 Выберите цвет</option>
             <option value="red">Красный</option>
             <option value="blue">Синий</option>
@@ -157,7 +190,17 @@ function App() {
             <option value="yellow">Жёлтый</option>
             <option value="purple">Фиолетовый</option>
           </select>
-          <select value={style} onChange={(e) => setStyle(e.target.value)} style={{ display: "block", margin: "10px 0", padding: "8px", borderRadius: "8px", width: "300px" }}>
+          <select
+            value={style}
+            onChange={(e) => setStyle(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
             <option value="">🎭 Выберите стиль</option>
             <option value="realism">Реализм</option>
             <option value="cartoon">Мультяшный</option>
@@ -166,7 +209,17 @@ function App() {
             <option value="sketch">Скетч</option>
             <option value="abstract">Абстракция</option>
           </select>
-          <select value={format} onChange={(e) => setFormat(e.target.value)} style={{ display: "block", margin: "10px 0", padding: "8px", borderRadius: "8px", width: "300px" }}>
+          <select
+            value={format}
+            onChange={(e) => setFormat(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
             <option value="">📐 Выберите формат</option>
             <option value="square">Квадрат</option>
             <option value="portrait">Портрет</option>
@@ -178,7 +231,17 @@ function App() {
 
       {tab === "video" && (
         <>
-          <select value={tone} onChange={(e) => setTone(e.target.value)} style={{ display: "block", margin: "10px 0", padding: "8px", borderRadius: "8px", width: "300px" }}>
+          <select
+            value={tone}
+            onChange={(e) => setTone(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
             <option value="">🎨 Выберите цветовую гамму</option>
             <option value="warm">Тёплые</option>
             <option value="cool">Холодные</option>
@@ -186,7 +249,17 @@ function App() {
             <option value="bright">Яркие</option>
             <option value="pastel">Пастельные</option>
           </select>
-          <select value={videoType} onChange={(e) => setVideoType(e.target.value)} style={{ display: "block", margin: "10px 0", padding: "8px", borderRadius: "8px", width: "300px" }}>
+          <select
+            value={videoType}
+            onChange={(e) => setVideoType(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
             <option value="">🎥 Выберите тип видео</option>
             <option value="nature">Природа</option>
             <option value="city">Город</option>
@@ -196,7 +269,17 @@ function App() {
             <option value="sports">Спорт</option>
             <option value="technology">Технологии</option>
           </select>
-          <select value={duration} onChange={(e) => setDuration(e.target.value)} style={{ display: "block", margin: "10px 0", padding: "8px", borderRadius: "8px", width: "300px" }}>
+          <select
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            style={{
+              display: "block",
+              margin: "10px 0",
+              padding: "8px",
+              borderRadius: "8px",
+              width: "300px",
+            }}
+          >
             <option value="">⏱ Выберите продолжительность</option>
             <option value="short">Короткое (1–10 сек)</option>
             <option value="medium">Среднее (11–19 сек)</option>
@@ -205,23 +288,43 @@ function App() {
         </>
       )}
 
-      <button onClick={handleGenerate} style={{
-        background: "#3b82f6",
-        color: "#fff",
-        padding: "10px 20px",
-        border: "none",
-        borderRadius: "8px",
-        marginTop: "15px",
-        cursor: "pointer",
-        boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-        fontWeight: "bold"
-      }}>
+      <button
+        onClick={handleGenerate}
+        style={{
+          background: "#3b82f6",
+          color: "#fff",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "8px",
+          marginTop: "15px",
+          cursor: "pointer",
+          boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
+          fontWeight: "bold",
+        }}
+      >
         🚀 Сгенерировать
       </button>
 
-      {/* Результат */}
+      {/* Анимация загрузки */}
       <div style={{ marginTop: "30px", textAlign: "center" }}>
-        {result}
+        {loading ? (
+          <div style={{ fontSize: "1.2rem" }}>
+            <div
+              style={{
+                border: "6px solid #f3f3f3",
+                borderTop: "6px solid #3b82f6",
+                borderRadius: "50%",
+                width: "40px",
+                height: "40px",
+                animation: "spin 1s linear infinite",
+                margin: "auto",
+              }}
+            />
+            <p style={{ marginTop: "10px" }}>⏳ Загрузка...</p>
+          </div>
+        ) : (
+          result
+        )}
       </div>
     </div>
   );
