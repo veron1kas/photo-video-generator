@@ -162,7 +162,7 @@ function App() {
         </button>
       </header>
 
-      {/* Выбор фото/видео */}
+      {/* Переключатель фото/видео */}
       <div style={{ marginBottom: "15px" }}>
         <button
           onClick={() => setTab("photo")}
@@ -207,19 +207,21 @@ function App() {
         }}
       />
 
-      {/* Dropdown меню */}
+      {/* Dropdown для фото */}
       {tab === "photo" && (
         <>
-          {/* dropdowns для фото */}
+          {/* dropdown для фото */}
         </>
       )}
 
+      {/* Dropdown для видео */}
       {tab === "video" && (
         <>
-          {/* dropdowns для видео */}
+          {/* dropdown для видео */}
         </>
       )}
 
+      {/* Кнопка */}
       <button
         onClick={handleGenerate}
         style={{
@@ -237,7 +239,7 @@ function App() {
         🚀 Сгенерировать
       </button>
 
-      {/* Анимация загрузки */}
+      {/* Загрузка или результат */}
       <div style={{ marginTop: "30px", textAlign: "center" }}>
         {loading ? (
           <div style={{ fontSize: "1.2rem" }}>
